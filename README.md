@@ -1,1 +1,421 @@
-# sos-button-test
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>Guardian - Emergency Response</title>
+<meta name="theme-color" content="#07080D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Guardian">
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #07080D;
+  --surface: #0F1118;
+  --red: #FF3B3B;
+  --red-glow: rgba(255,59,59,0.4);
+  --green: #22C55E;
+  --text: #EEF0FF;
+  --text2: #8890B5;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Main screen */
+.main-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.main-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.shield-icon {
+  font-size: 120px;
+  margin-bottom: 40px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.main-text {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.sub-text {
+  font-size: 16px;
+  color: var(--text2);
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.status {
+  font-size: 14px;
+  color: var(--green);
+  background: rgba(34,197,94,0.1);
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(34,197,94,0.3);
+}
+
+/* Countdown overlay */
+.countdown-screen {
+  position: fixed;
+  inset: 0;
+  background: rgba(7,8,13,0.95);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: slideUp 0.3s ease;
+}
+
+.countdown-screen.active {
+  display: flex;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.countdown-number {
+  font-size: 120px;
+  font-weight: 800;
+  color: var(--red);
+  margin-bottom: 20px;
+  text-shadow: 0 0 20px var(--red-glow);
+  animation: pulse 0.6s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.countdown-message {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 30px;
+  letter-spacing: 0.5px;
+}
+
+.countdown-sub {
+  font-size: 14px;
+  color: var(--text2);
+  margin-bottom: 40px;
+}
+
+.cancel-btn {
+  background: var(--surface);
+  border: 2px solid var(--red);
+  color: var(--red);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 14px 36px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+  background: var(--red);
+  color: white;
+}
+
+.cancel-btn:active {
+  transform: scale(0.95);
+}
+
+/* Emergency call screen */
+.call-screen {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #FF3B3B 0%, #CC2E2E 100%);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 101;
+}
+
+.call-screen.active {
+  display: flex;
+}
+
+.call-icon {
+  font-size: 80px;
+  margin-bottom: 30px;
+  animation: ringPulse 1s ease infinite;
+}
+
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.call-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.call-status {
+  font-size: 16px;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 40px;
+}
+
+@media (max-width: 600px) {
+  .main-text {
+    font-size: 28px;
+  }
+
+  .shield-icon {
+    font-size: 100px;
+    margin-bottom: 30px;
+  }
+
+  .countdown-number {
+    font-size: 100px;
+  }
+
+  .countdown-message {
+    font-size: 20px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Main Screen -->
+<div class="main-screen" id="mainScreen">
+  <div class="shield-icon">🛡️</div>
+  <div class="main-text">Guardian</div>
+  <div class="sub-text">At Your Service</div>
+  <div class="status">✓ Ready to Protect</div>
+</div>
+
+<!-- Countdown Screen -->
+<div class="countdown-screen" id="countdownScreen">
+  <div class="countdown-number" id="countdownNumber">10</div>
+  <div class="countdown-message">EMERGENCY ALERT</div>
+  <div class="countdown-sub">Press Cancel to abort emergency call</div>
+  <button class="cancel-btn" id="cancelBtn" onclick="cancelEmergency()">CANCEL</button>
+</div>
+
+<!-- Emergency Call Screen -->
+<div class="call-screen" id="callScreen">
+  <div class="call-icon">📞</div>
+  <div class="call-title">CALLING POLICE</div>
+  <div class="call-status">Connecting to nearest emergency services...</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// GUARDIAN EMERGENCY APP
+// Shake Detection & Auto-Call to Police
+// ═══════════════════════════════════════════════════════════
+
+let isCountingDown = false;
+let countdownValue = 10;
+let countdownInterval = null;
+let lastShakeTime = 0;
+const SHAKE_THRESHOLD = 20;
+const SHAKE_COOLDOWN = 2000;
+let wakelock = null;
+
+// ───────────────────────────────────────────────────────────
+// Wake Lock - Keep app responsive even when screen is off
+// ───────────────────────────────────────────────────────────
+async function acquireWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakelock = await navigator.wakeLock.request('screen');
+      console.log('Wake lock acquired - app will stay responsive');
+      
+      // Re-acquire wake lock if document visibility changes
+      document.addEventListener('visibilitychange', async () => {
+        if (document.hidden && wakelock) {
+          wakelock = null;
+        } else if (!document.hidden && !wakelock) {
+          wakelock = await navigator.wakeLock.request('screen');
+        }
+      });
+    }
+  } catch (err) {
+    console.log('Wake lock not supported:', err);
+  }
+}
+
+// ───────────────────────────────────────────────────────────
+// Shake Detection
+// ───────────────────────────────────────────────────────────
+function initShakeDetection() {
+  if (!window.DeviceMotionEvent) {
+    console.log('DeviceMotionEvent not supported');
+    return;
+  }
+
+  console.log('Shake detection initialized');
+
+  // Request permission for iOS 13+
+  if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+    DeviceMotionEvent.requestPermission()
+      .then(permissionState => {
+        if (permissionState === 'granted') {
+          window.addEventListener('devicemotion', detectShake);
+        }
+      })
+      .catch(console.error);
+  } else {
+    // Non-iOS 13 devices
+    window.addEventListener('devicemotion', detectShake);
+  }
+}
+
+function detectShake(event) {
+  const acceleration = event.accelerationIncludingGravity;
+  if (!acceleration) return;
+
+  const x = acceleration.x || 0;
+  const y = acceleration.y || 0;
+  const z = acceleration.z || 0;
+
+  const magnitude = Math.sqrt(x * x + y * y + z * z);
+  const now = Date.now();
+
+  if (magnitude > SHAKE_THRESHOLD && (now - lastShakeTime > SHAKE_COOLDOWN) && !isCountingDown) {
+    lastShakeTime = now;
+    startCountdown();
+  }
+}
+
+// ───────────────────────────────────────────────────────────
+// Countdown Logic
+// ───────────────────────────────────────────────────────────
+function startCountdown() {
+  isCountingDown = true;
+  countdownValue = 10;
+
+  document.getElementById('mainScreen').classList.add('hidden');
+  document.getElementById('countdownScreen').classList.add('active');
+
+  // Vibrate pattern
+  if (navigator.vibrate) {
+    navigator.vibrate([200, 100, 200]);
+  }
+
+  countdownInterval = setInterval(() => {
+    document.getElementById('countdownNumber').textContent = countdownValue;
+
+    if (navigator.vibrate) {
+      navigator.vibrate(100);
+    }
+
+    countdownValue--;
+
+    if (countdownValue < 0) {
+      clearInterval(countdownInterval);
+      endCountdown();
+    }
+  }, 1000);
+}
+
+function cancelEmergency() {
+  clearInterval(countdownInterval);
+  isCountingDown = false;
+  countdownValue = 10;
+
+  document.getElementById('countdownScreen').classList.remove('active');
+  document.getElementById('mainScreen').classList.remove('hidden');
+
+  // Vibrate cancel pattern
+  if (navigator.vibrate) {
+    navigator.vibrate([100, 50, 100]);
+  }
+
+  console.log('Emergency call cancelled');
+}
+
+function endCountdown() {
+  document.getElementById('countdownScreen').classList.remove('active');
+  document.getElementById('callScreen').classList.add('active');
+
+  // Continuous vibration during call
+  if (navigator.vibrate) {
+    navigator.vibrate([300, 100, 300, 100, 300]);
+  }
+
+  // Call the specified number
+  setTimeout(() => {
+    window.location.href = 'tel:+919500605284';
+  }, 1500);
+}
+
+// ───────────────────────────────────────────────────────────
+// Initialize on Load
+// ───────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  console.log('Guardian app loaded');
+  acquireWakeLock();
+  initShakeDetection();
+
+  // Prevent accidental screen lock
+  document.addEventListener('touchstart', () => {
+    if (wakelock === null && 'wakeLock' in navigator) {
+      acquireWakeLock();
+    }
+  });
+});
+
+// Prevent screen lock on user interaction
+document.addEventListener('click', () => {
+  if (wakelock === null && 'wakeLock' in navigator) {
+    acquireWakeLock();
+  }
+});
+</script>
+
+</body>
+</html>
