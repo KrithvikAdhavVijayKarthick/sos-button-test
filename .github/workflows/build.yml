@@ -8,13 +8,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       - name: Unzip project
-        run: unzip guardian_sos_v3.zip
+        run: unzip guardian_sos_v2.zip
 
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: '17'
@@ -23,14 +23,6 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.24.3'
-
-      - name: Fix pubspec versions
-        run: |
-          cd guardian_sos
-          sed -i 's/geolocator: .*/geolocator: ^13.0.1/' pubspec.yaml
-          sed -i 's/flutter_background_service: .*/flutter_background_service: ^5.0.5/' pubspec.yaml
-          sed -i 's/flutter_background_service_android: .*/flutter_background_service_android: ^6.2.2/' pubspec.yaml
-          sed -i 's/sensors_plus: .*/sensors_plus: ^6.1.0/' pubspec.yaml
 
       - name: Get dependencies
         run: |
@@ -43,7 +35,7 @@ jobs:
           flutter build apk --release
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: guardian-apk
           path: guardian_sos/build/app/outputs/flutter-apk/app-release.apk
