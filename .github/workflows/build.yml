@@ -24,15 +24,18 @@ jobs:
         with:
           flutter-version: '3.24.3'
 
+      - name: Fix pubspec versions
+        run: |
+          cd guardian_sos
+          sed -i 's/geolocator: .*/geolocator: ^13.0.1/' pubspec.yaml
+          sed -i 's/flutter_background_service: .*/flutter_background_service: ^5.0.5/' pubspec.yaml
+          sed -i 's/flutter_background_service_android: .*/flutter_background_service_android: ^6.2.2/' pubspec.yaml
+          sed -i 's/sensors_plus: .*/sensors_plus: ^6.1.0/' pubspec.yaml
+
       - name: Get dependencies
         run: |
           cd guardian_sos
           flutter pub get
-
-      - name: Migrate to v2 embedding
-        run: |
-          cd guardian_sos
-          flutter create --platforms android . 
 
       - name: Build APK
         run: |
