@@ -3,718 +3,654 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-<title>Guardian - Emergency Response</title>
+<title>Guardian</title>
 <meta name="theme-color" content="#07080D">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Guardian">
 <style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
   --bg: #07080D;
   --surface: #0F1118;
   --red: #FF3B3B;
-  --red-glow: rgba(255,59,59,0.4);
+  --red-dim: rgba(255,59,59,0.15);
+  --red-glow: rgba(255,59,59,0.45);
   --green: #22C55E;
-  --amber: #F59E0B;
+  --wa: #25D366;
   --text: #EEF0FF;
-  --text2: #8890B5;
-  --border: rgba(136,144,181,0.15);
+  --text2: #6B7399;
+  --safe-b: env(safe-area-inset-bottom, 0px);
 }
 
 html, body {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   overflow: hidden;
-}
-
-body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* ── SCREENS ── */
+.screen {
+  position: fixed;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-
-/* ── MAIN SCREEN ── */
-.main-screen {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  width: 100%;
-  height: 100%;
-  padding: 32px 24px;
-  transition: opacity 0.3s ease;
-}
-
-.main-screen.hidden {
+  padding: 32px 28px calc(32px + var(--safe-b));
   opacity: 0;
   pointer-events: none;
-}
-
-.shield-wrap {
-  position: relative;
-  margin-bottom: 36px;
-}
-
-.shield-ring {
-  position: absolute;
-  inset: -20px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(34,197,94,0.2);
-  animation: ringPop 3s ease-in-out infinite;
-}
-
-.shield-ring.r2 {
-  inset: -38px;
-  border-color: rgba(34,197,94,0.1);
-  animation-delay: 0.4s;
-}
-
-@keyframes ringPop {
-  0%, 100% { transform: scale(1); opacity: 0.6; }
-  50% { transform: scale(1.08); opacity: 1; }
-}
-
-.shield-icon {
-  font-size: 90px;
-  display: block;
-  animation: float 3.5s ease-in-out infinite;
-  filter: drop-shadow(0 0 24px rgba(34,197,94,0.3));
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-14px); }
-}
-
-.main-text {
-  font-size: 34px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  color: var(--text);
-  margin-bottom: 8px;
-  text-transform: uppercase;
-}
-
-.main-tagline {
-  font-size: 13px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--text2);
-  margin-bottom: 36px;
-}
-
-/* Status badge */
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 10px 20px;
-  border-radius: 100px;
-  border: 1px solid;
-  transition: all 0.4s ease;
-  margin-bottom: 36px;
-}
-
-.status-badge.ready {
-  color: var(--green);
-  background: rgba(34,197,94,0.08);
-  border-color: rgba(34,197,94,0.3);
-}
-
-.status-badge.armed {
-  color: var(--green);
-  background: rgba(34,197,94,0.12);
-  border-color: rgba(34,197,94,0.5);
-}
-
-.status-badge.waiting {
-  color: var(--amber);
-  background: rgba(245,158,11,0.08);
-  border-color: rgba(245,158,11,0.3);
-}
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.status-badge.armed .status-dot {
-  animation: blink 1s ease infinite;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.2; }
-}
-
-/* Activate button */
-.activate-btn {
-  background: transparent;
-  border: 2px solid var(--green);
-  color: var(--green);
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 16px 40px;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: all 0.25s;
-  -webkit-tap-highlight-color: transparent;
-  position: relative;
-  overflow: hidden;
-}
-
-.activate-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--green);
-  opacity: 0;
-  transition: opacity 0.25s;
-}
-
-.activate-btn:hover::before,
-.activate-btn:active::before {
-  opacity: 0.12;
-}
-
-.activate-btn:active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
   transform: scale(0.97);
 }
-
-/* Info strip */
-.info-strip {
-  margin-top: 32px;
-  display: flex;
-  gap: 24px;
-  align-items: center;
+.screen.show {
+  opacity: 1;
+  pointer-events: all;
+  transform: scale(1);
 }
 
-.info-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+/* ── MAIN ── */
+#mainScreen {
+  text-align: center;
+  gap: 0;
 }
 
-.info-label {
-  font-size: 10px;
-  letter-spacing: 2px;
+.pulse-wrap {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.pulse-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--green);
+  opacity: 0;
+  animation: pulseRing 2.8s ease-out infinite;
+}
+.pulse-ring:nth-child(2) { animation-delay: 0.9s; }
+.pulse-ring:nth-child(3) { animation-delay: 1.8s; }
+
+@keyframes pulseRing {
+  0%   { transform: scale(0.85); opacity: 0.6; }
+  100% { transform: scale(1.55); opacity: 0; }
+}
+
+.shield {
+  font-size: 68px;
+  animation: breathe 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 18px rgba(34,197,94,0.4));
+  position: relative;
+  z-index: 1;
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.06); }
+}
+
+.app-name {
+  font-size: 11px;
+  letter-spacing: 5px;
   text-transform: uppercase;
   color: var(--text2);
+  margin-bottom: 10px;
 }
 
-.info-value {
-  font-size: 13px;
-  font-weight: 600;
+.app-tagline {
+  font-size: 26px;
+  font-weight: 700;
   color: var(--text);
+  margin-bottom: 28px;
+  line-height: 1.25;
 }
 
-.info-divider {
-  width: 1px;
-  height: 28px;
-  background: var(--border);
+.armed-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--green);
+  background: rgba(34,197,94,0.08);
+  border: 1px solid rgba(34,197,94,0.25);
+  padding: 9px 18px;
+  border-radius: 100px;
 }
 
-/* Shake hint bar */
-.shake-hint {
+.armed-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: blink 1.2s ease infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.15; }
+}
+
+.shake-bar {
   position: fixed;
-  bottom: calc(env(safe-area-inset-bottom) + 20px);
+  bottom: calc(28px + var(--safe-b));
   left: 50%;
   transform: translateX(-50%);
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text2);
   display: flex;
   align-items: center;
   gap: 8px;
-  opacity: 0;
-  transition: opacity 0.5s;
   white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+.shake-icon { animation: wiggle 2s ease infinite; }
+@keyframes wiggle {
+  0%, 80%, 100% { transform: rotate(0deg); }
+  85%  { transform: rotate(-18deg); }
+  90%  { transform: rotate(18deg); }
+  95%  { transform: rotate(-10deg); }
+  98%  { transform: rotate(10deg); }
 }
 
-.shake-hint.visible {
-  opacity: 1;
-}
+/* ── COUNTDOWN ── */
+#countdownScreen { background: rgba(7,8,13,0.98); z-index: 10; }
 
-.shake-icon {
-  animation: shakeAnim 1.5s ease infinite;
-}
-
-@keyframes shakeAnim {
-  0%, 100% { transform: rotate(0deg); }
-  20% { transform: rotate(-15deg); }
-  40% { transform: rotate(15deg); }
-  60% { transform: rotate(-10deg); }
-  80% { transform: rotate(10deg); }
-}
-
-/* ── COUNTDOWN SCREEN ── */
-.countdown-screen {
-  position: fixed;
-  inset: 0;
-  background: rgba(7,8,13,0.97);
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-
-.countdown-screen.active {
-  display: flex;
-  animation: fadeIn 0.25s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.96); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.countdown-ring-wrap {
+.arc-wrap {
   position: relative;
-  width: 180px;
-  height: 180px;
-  margin-bottom: 32px;
+  width: 200px;
+  height: 200px;
+  margin-bottom: 28px;
 }
-
-.countdown-svg {
+.arc-svg {
   position: absolute;
   inset: 0;
   transform: rotate(-90deg);
 }
-
-.countdown-track {
+.arc-track {
   fill: none;
-  stroke: rgba(255,59,59,0.12);
-  stroke-width: 4;
+  stroke: rgba(255,59,59,0.1);
+  stroke-width: 5;
 }
-
-.countdown-progress {
+.arc-fill {
   fill: none;
   stroke: var(--red);
-  stroke-width: 4;
+  stroke-width: 5;
   stroke-linecap: round;
-  stroke-dasharray: 502;
+  stroke-dasharray: 534; /* 2π×85 */
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset 0.9s linear;
-  filter: drop-shadow(0 0 6px var(--red));
+  transition: stroke-dashoffset 0.95s linear;
+  filter: drop-shadow(0 0 8px var(--red-glow));
 }
-
-.countdown-number {
+.arc-num {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 72px;
+  font-size: 80px;
   font-weight: 900;
   color: var(--red);
-  text-shadow: 0 0 30px var(--red-glow);
+  text-shadow: 0 0 40px var(--red-glow);
 }
 
-.countdown-label {
-  font-size: 11px;
+.cd-eyebrow {
+  font-size: 10px;
   letter-spacing: 4px;
   text-transform: uppercase;
   color: var(--red);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  opacity: 0.7;
 }
-
-.countdown-message {
+.cd-title {
   font-size: 22px;
   font-weight: 700;
   color: var(--text);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
-
-.countdown-sub {
+.cd-sub {
   font-size: 13px;
   color: var(--text2);
-  margin-bottom: 40px;
+  margin-bottom: 36px;
 }
 
 .cancel-btn {
   background: var(--surface);
-  border: 2px solid rgba(255,59,59,0.5);
+  border: 1.5px solid rgba(255,59,59,0.4);
   color: var(--red);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  padding: 16px 44px;
+  padding: 16px 48px;
   border-radius: 14px;
   cursor: pointer;
-  transition: all 0.2s;
   -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s, transform 0.15s;
 }
-
-.cancel-btn:hover,
 .cancel-btn:active {
-  background: var(--red);
-  color: white;
-  border-color: var(--red);
-  transform: scale(0.97);
+  background: var(--red-dim);
+  transform: scale(0.96);
 }
 
 /* ── CALL SCREEN ── */
-.call-screen {
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(160deg, #C0392B 0%, #922B21 60%, #641E16 100%);
-  display: none;
-  flex-direction: column;
+#callScreen {
+  z-index: 11;
+  background: #07080D;
+  text-align: center;
+  gap: 0;
+}
+
+.wa-rings-wrap {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 101;
-  padding: 40px;
-}
-
-.call-screen.active {
-  display: flex;
-  animation: fadeIn 0.3s ease;
-}
-
-.call-rings {
-  position: relative;
-  width: 120px;
-  height: 120px;
   margin-bottom: 32px;
 }
-
-.call-ring-anim {
+.wa-ring {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.3);
-  animation: callRing 1.8s ease-out infinite;
+  border: 2px solid var(--wa);
+  opacity: 0;
+  animation: waRing 2s ease-out infinite;
+}
+.wa-ring:nth-child(2) { animation-delay: 0.65s; }
+.wa-ring:nth-child(3) { animation-delay: 1.3s; }
+@keyframes waRing {
+  0%   { transform: scale(0.8); opacity: 0.7; }
+  100% { transform: scale(2);   opacity: 0; }
 }
 
-.call-ring-anim:nth-child(2) { animation-delay: 0.6s; }
-.call-ring-anim:nth-child(3) { animation-delay: 1.2s; }
-
-@keyframes callRing {
-  0% { transform: scale(1); opacity: 0.8; }
-  100% { transform: scale(2.2); opacity: 0; }
-}
-
-.call-emoji {
-  position: absolute;
-  inset: 0;
+.wa-circle {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--wa);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 56px;
-  animation: callPulse 0.8s ease infinite;
+  font-size: 38px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 40px rgba(37,211,102,0.5);
+  animation: waPulse 1s ease infinite;
 }
-
-@keyframes callPulse {
+@keyframes waPulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.07); }
+  50%       { transform: scale(1.06); }
 }
 
-.call-title {
+.call-label {
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--wa);
+  margin-bottom: 10px;
+  opacity: 0.8;
+}
+.call-name {
   font-size: 28px;
   font-weight: 800;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: white;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+.call-number {
+  font-size: 16px;
+  color: var(--text2);
   margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+.call-status {
+  font-size: 13px;
+  color: var(--wa);
+  margin-bottom: 32px;
+  animation: fadeStatus 1.5s ease infinite;
+}
+@keyframes fadeStatus {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
 }
 
-.call-number {
-  font-size: 22px;
-  font-weight: 600;
-  color: rgba(255,255,255,0.9);
-  letter-spacing: 1px;
+/* Location pill */
+.loc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text2);
+  background: var(--surface);
+  border: 1px solid rgba(136,144,181,0.15);
+  padding: 10px 18px;
+  border-radius: 100px;
   margin-bottom: 8px;
 }
+.loc-text {
+  font-size: 11px;
+  color: var(--text2);
+  max-width: 260px;
+  text-align: center;
+  line-height: 1.5;
+}
 
-.call-status {
-  font-size: 14px;
-  color: rgba(255,255,255,0.6);
+/* ── iOS Permission overlay ── */
+#permOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7,8,13,0.92);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+  text-align: center;
+  gap: 16px;
+}
+#permOverlay.gone { display: none; }
+
+.perm-icon { font-size: 60px; margin-bottom: 8px; }
+.perm-title { font-size: 22px; font-weight: 700; color: var(--text); }
+.perm-sub { font-size: 14px; color: var(--text2); line-height: 1.6; }
+.perm-btn {
+  margin-top: 8px;
+  background: var(--green);
+  color: #07080D;
+  font-size: 15px;
+  font-weight: 800;
   letter-spacing: 1px;
+  padding: 16px 48px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s;
 }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 400px) {
-  .main-text { font-size: 28px; }
-  .shield-icon { font-size: 76px; }
-  .info-strip { gap: 16px; }
-}
+.perm-btn:active { transform: scale(0.96); }
 </style>
 </head>
 <body>
 
-<!-- ── MAIN SCREEN ── -->
-<div class="main-screen" id="mainScreen">
-  <div class="shield-wrap">
-    <div class="shield-ring"></div>
-    <div class="shield-ring r2"></div>
-    <span class="shield-icon">🛡️</span>
+<!-- iOS Permission Prompt -->
+<div id="permOverlay" class="gone">
+  <div class="perm-icon">📳</div>
+  <div class="perm-title">Allow Motion Access</div>
+  <div class="perm-sub">Guardian needs motion permission to detect shaking and trigger emergency alerts automatically.</div>
+  <button class="perm-btn" onclick="requestIOSPermission()">Allow &amp; Start</button>
+</div>
+
+<!-- MAIN SCREEN -->
+<div class="screen show" id="mainScreen">
+  <div class="pulse-wrap">
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <span class="shield">🛡️</span>
   </div>
-
-  <div class="main-text">Guardian</div>
-  <div class="main-tagline">Emergency Response</div>
-
-  <div class="status-badge waiting" id="statusBadge">
-    <div class="status-dot"></div>
-    <span id="statusText">Tap to Arm</span>
+  <div class="app-name">Guardian</div>
+  <div class="app-tagline">Shake for<br>Emergency</div>
+  <div class="armed-pill">
+    <div class="armed-dot"></div>
+    Always Watching
   </div>
-
-  <button class="activate-btn" id="activateBtn" onclick="activateShakeDetection()">
-    ARM PROTECTION
-  </button>
-
-  <div class="info-strip">
-    <div class="info-item">
-      <div class="info-label">Mode</div>
-      <div class="info-value">Shake</div>
-    </div>
-    <div class="info-divider"></div>
-    <div class="info-item">
-      <div class="info-label">Countdown</div>
-      <div class="info-value">10 sec</div>
-    </div>
-    <div class="info-divider"></div>
-    <div class="info-item">
-      <div class="info-label">Calls</div>
-      <div class="info-value">Police</div>
-    </div>
+  <div class="shake-bar">
+    <span class="shake-icon">📳</span>
+    Shake hard to trigger emergency call
   </div>
 </div>
 
-<!-- Shake hint -->
-<div class="shake-hint" id="shakeHint">
-  <span class="shake-icon">📳</span>
-  Shake your phone hard to trigger an emergency
-</div>
-
-<!-- ── COUNTDOWN SCREEN ── -->
-<div class="countdown-screen" id="countdownScreen">
-  <div class="countdown-ring-wrap">
-    <svg class="countdown-svg" viewBox="0 0 180 180">
-      <circle class="countdown-track" cx="90" cy="90" r="80"/>
-      <circle class="countdown-progress" id="countdownArc" cx="90" cy="90" r="80"/>
+<!-- COUNTDOWN SCREEN -->
+<div class="screen" id="countdownScreen">
+  <div class="arc-wrap">
+    <svg class="arc-svg" viewBox="0 0 200 200">
+      <circle class="arc-track" cx="100" cy="100" r="85"/>
+      <circle class="arc-fill"  cx="100" cy="100" r="85" id="arcFill"/>
     </svg>
-    <div class="countdown-number" id="countdownNumber">10</div>
+    <div class="arc-num" id="cdNum">10</div>
   </div>
-
-  <div class="countdown-label">Emergency Alert</div>
-  <div class="countdown-message">Calling Police in…</div>
-  <div class="countdown-sub">Shake again or press Cancel to abort</div>
-  <button class="cancel-btn" id="cancelBtn" onclick="cancelEmergency()">✕ &nbsp;CANCEL</button>
+  <div class="cd-eyebrow">Emergency Alert</div>
+  <div class="cd-title">Calling via WhatsApp in…</div>
+  <div class="cd-sub">Shake again or tap Cancel to abort</div>
+  <button class="cancel-btn" onclick="cancelEmergency()">✕  Cancel</button>
 </div>
 
-<!-- ── CALL SCREEN ── -->
-<div class="call-screen" id="callScreen">
-  <div class="call-rings">
-    <div class="call-ring-anim"></div>
-    <div class="call-ring-anim"></div>
-    <div class="call-ring-anim"></div>
-    <div class="call-emoji">📞</div>
+<!-- CALL SCREEN -->
+<div class="screen" id="callScreen">
+  <div class="wa-rings-wrap">
+    <div class="wa-ring"></div>
+    <div class="wa-ring"></div>
+    <div class="wa-ring"></div>
+    <div class="wa-circle">📞</div>
   </div>
-  <div class="call-title">Calling Police</div>
+  <div class="call-label">WhatsApp Emergency</div>
+  <div class="call-name">Calling Police</div>
   <div class="call-number">+91 97916 62479</div>
-  <div class="call-status">Connecting to emergency services…</div>
+  <div class="call-status" id="callStatusText">Opening WhatsApp…</div>
+
+  <div class="loc-pill">
+    📍 <span id="locPillText">Fetching location…</span>
+  </div>
+  <div class="loc-text" id="locLinkText"></div>
 </div>
 
 <script>
 // ════════════════════════════════════════════════════════════
-//  GUARDIAN — Emergency Response
-//  Shake → Countdown → Auto-call to +919791662479
+//  GUARDIAN  — Shake → WhatsApp emergency call
+//  Number: +919791662479
+//  On connect: sends danger message + live Google Maps link
 // ════════════════════════════════════════════════════════════
 
-const EMERGENCY_NUMBER = '+919791662479';
-const SHAKE_THRESHOLD  = 18;   // m/s² — lower = more sensitive
-const SHAKE_COOLDOWN   = 2000; // ms between shake events
-const COUNTDOWN_SEC    = 10;
+const WA_NUMBER      = '919791662479';   // no +
+const COUNTDOWN_SEC  = 10;
+const SHAKE_THRESH   = 16;
+const SHAKE_COOLDOWN = 2500;
+const ARC_CIRC       = 2 * Math.PI * 85; // ≈ 534
 
-let isArmed          = false;
-let isCountingDown   = false;
-let countdownValue   = COUNTDOWN_SEC;
-let countdownInterval = null;
-let lastShakeTime    = 0;
-let wakelock         = null;
+let isCountingDown = false;
+let cdValue        = COUNTDOWN_SEC;
+let cdTimer        = null;
+let lastShake      = 0;
+let lx = null, ly = null, lz = null;
+let cachedCoords   = null;
+let wakelock       = null;
 
-const FULL_DASH = 2 * Math.PI * 80; // circumference for r=80
+// ── INIT ─────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  document.getElementById('arcFill').style.strokeDasharray  = ARC_CIRC;
+  document.getElementById('arcFill').style.strokeDashoffset = 0;
 
-// ── Activate (requires user gesture for iOS) ──────────────
-function activateShakeDetection() {
-  if (isArmed) return;
+  prefetchLocation();
+  acquireWakeLock();
+  startShakeDetection();
+});
 
-  // iOS 13+ requires explicit permission via user gesture
-  if (typeof DeviceMotionEvent !== 'undefined' &&
-      typeof DeviceMotionEvent.requestPermission === 'function') {
+// ── SHAKE DETECTION ───────────────────────────────────────
+function startShakeDetection() {
+  if (!window.DeviceMotionEvent) return;
 
-    DeviceMotionEvent.requestPermission()
-      .then(state => {
-        if (state === 'granted') {
-          window.addEventListener('devicemotion', detectShake, { passive: true });
-          onArmed();
-        } else {
-          alert('Motion permission denied. Guardian needs motion access to detect shaking.');
-        }
-      })
-      .catch(err => {
-        console.error('Permission error:', err);
-      });
+  // iOS 13+ needs permission inside a user gesture
+  if (typeof DeviceMotionEvent.requestPermission === 'function') {
+    // Show a tap-to-allow overlay so user can grant permission
+    document.getElementById('permOverlay').classList.remove('gone');
   } else {
-    // Android / desktop — no permission needed
-    window.addEventListener('devicemotion', detectShake, { passive: true });
-    onArmed();
+    // Android / non-iOS
+    window.addEventListener('devicemotion', onMotion, { passive: true });
   }
 }
 
-function onArmed() {
-  isArmed = true;
-
-  const badge = document.getElementById('statusBadge');
-  badge.className = 'status-badge armed';
-  document.getElementById('statusText').textContent = 'Armed & Monitoring';
-
-  const btn = document.getElementById('activateBtn');
-  btn.textContent = 'PROTECTION ACTIVE';
-  btn.style.opacity = '0.4';
-  btn.style.cursor  = 'default';
-  btn.onclick = null;
-
-  document.getElementById('shakeHint').classList.add('visible');
-
-  acquireWakeLock();
-  console.log('Guardian armed — shake detection active');
+function requestIOSPermission() {
+  DeviceMotionEvent.requestPermission()
+    .then(state => {
+      document.getElementById('permOverlay').classList.add('gone');
+      if (state === 'granted') {
+        window.addEventListener('devicemotion', onMotion, { passive: true });
+      }
+    })
+    .catch(console.error);
 }
 
-// ── Shake Detection ────────────────────────────────────────
-let lastX = null, lastY = null, lastZ = null;
+function onMotion(e) {
+  const a = e.accelerationIncludingGravity;
+  if (!a) return;
+  const x = a.x || 0, y = a.y || 0, z = a.z || 0;
 
-function detectShake(event) {
-  const acc = event.accelerationIncludingGravity;
-  if (!acc) return;
-
-  const x = acc.x || 0, y = acc.y || 0, z = acc.z || 0;
-
-  // Delta method — more reliable than magnitude alone
-  if (lastX !== null) {
-    const dx = Math.abs(x - lastX);
-    const dy = Math.abs(y - lastY);
-    const dz = Math.abs(z - lastZ);
-    const delta = Math.max(dx, dy, dz);
-
-    const now = Date.now();
-    if (delta > SHAKE_THRESHOLD && (now - lastShakeTime) > SHAKE_COOLDOWN && !isCountingDown) {
-      lastShakeTime = now;
+  if (lx !== null) {
+    const delta = Math.max(Math.abs(x - lx), Math.abs(y - ly), Math.abs(z - lz));
+    const now   = Date.now();
+    if (delta > SHAKE_THRESH && now - lastShake > SHAKE_COOLDOWN && !isCountingDown) {
+      lastShake = now;
       startCountdown();
     }
   }
-
-  lastX = x; lastY = y; lastZ = z;
+  lx = x; ly = y; lz = z;
 }
 
-// ── Countdown ─────────────────────────────────────────────
+// ── LOCATION PRE-FETCH ───────────────────────────────────
+function prefetchLocation() {
+  if (!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(
+    pos => { cachedCoords = pos.coords; },
+    ()  => {},
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+}
+
+function getLocationURL() {
+  return new Promise(resolve => {
+    // If we already have it, use it
+    if (cachedCoords) {
+      resolve(buildMapURL(cachedCoords.latitude, cachedCoords.longitude));
+      return;
+    }
+    if (!navigator.geolocation) {
+      resolve(null);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        cachedCoords = pos.coords;
+        resolve(buildMapURL(pos.coords.latitude, pos.coords.longitude));
+      },
+      () => resolve(null),
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  });
+}
+
+function buildMapURL(lat, lng) {
+  return `https://maps.google.com/?q=${lat},${lng}`;
+}
+
+// ── COUNTDOWN ────────────────────────────────────────────
 function startCountdown() {
   isCountingDown = true;
-  countdownValue = COUNTDOWN_SEC;
+  cdValue = COUNTDOWN_SEC;
 
-  document.getElementById('mainScreen').classList.add('hidden');
-  document.getElementById('shakeHint').classList.remove('visible');
-  document.getElementById('countdownScreen').classList.add('active');
-
-  updateCountdownUI(COUNTDOWN_SEC);
+  showScreen('countdownScreen');
+  updateArc(COUNTDOWN_SEC);
   vibrate([200, 100, 200, 100, 200]);
 
-  countdownInterval = setInterval(() => {
-    countdownValue--;
-    updateCountdownUI(countdownValue);
-    vibrate(80);
-
-    if (countdownValue <= 0) {
-      clearInterval(countdownInterval);
-      triggerEmergencyCall();
+  cdTimer = setInterval(() => {
+    cdValue--;
+    updateArc(cdValue);
+    vibrate(60);
+    if (cdValue <= 0) {
+      clearInterval(cdTimer);
+      launchWhatsAppCall();
     }
   }, 1000);
 }
 
-function updateCountdownUI(val) {
-  document.getElementById('countdownNumber').textContent = val;
-
-  // SVG arc progress — depletes as countdown goes down
-  const arc = document.getElementById('countdownArc');
-  const progress = val / COUNTDOWN_SEC; // 1 → 0
-  arc.style.strokeDashoffset = FULL_DASH * (1 - progress);
+function updateArc(val) {
+  document.getElementById('cdNum').textContent = val;
+  const progress  = val / COUNTDOWN_SEC;
+  const offset    = ARC_CIRC * (1 - progress);
+  document.getElementById('arcFill').style.strokeDashoffset = offset;
 }
 
 function cancelEmergency() {
-  clearInterval(countdownInterval);
-  isCountingDown  = false;
-  countdownValue  = COUNTDOWN_SEC;
+  clearInterval(cdTimer);
+  isCountingDown = false;
+  cdValue = COUNTDOWN_SEC;
+  showScreen('mainScreen');
+  vibrate([80, 50, 80]);
+}
 
-  document.getElementById('countdownScreen').classList.remove('active');
-  document.getElementById('mainScreen').classList.remove('hidden');
+// ── WHATSAPP CALL + MESSAGE ──────────────────────────────
+async function launchWhatsAppCall() {
+  showScreen('callScreen');
+  vibrate([400, 100, 400, 100, 400]);
 
-  if (isArmed) {
-    document.getElementById('shakeHint').classList.add('visible');
+  // Step 1 — get location
+  const mapURL = await getLocationURL();
+
+  // Step 2 — build the danger message
+  const msg = buildMessage(mapURL);
+
+  // Step 3 — update UI with location info
+  if (mapURL && cachedCoords) {
+    const lat = cachedCoords.latitude.toFixed(5);
+    const lng = cachedCoords.longitude.toFixed(5);
+    document.getElementById('locPillText').textContent = `${lat}, ${lng}`;
+    document.getElementById('locLinkText').textContent = mapURL;
+  } else {
+    document.getElementById('locPillText').textContent = 'Location unavailable';
   }
 
-  vibrate([100, 60, 100]);
-  console.log('Emergency cancelled by user');
-}
+  // Step 4 — open WhatsApp with pre-filled message then initiate call
+  // wa.me/NUMBER?text=MESSAGE  opens chat with message ready
+  // After 2s we update status
+  const waURL = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
 
-function triggerEmergencyCall() {
-  document.getElementById('countdownScreen').classList.remove('active');
-  document.getElementById('callScreen').classList.add('active');
-
-  vibrate([400, 100, 400, 100, 400, 100, 400]);
+  document.getElementById('callStatusText').textContent = 'Opening WhatsApp…';
 
   setTimeout(() => {
-    window.location.href = `tel:${EMERGENCY_NUMBER}`;
-  }, 1500);
+    window.location.href = waURL;
+    document.getElementById('callStatusText').textContent = 'Message sent — call now';
+  }, 1200);
 }
 
-// ── Wake Lock ──────────────────────────────────────────────
+function buildMessage(mapURL) {
+  const base = `🚨 EMERGENCY ALERT 🚨\n\nThe owner of this phone is in DANGER and needs immediate police assistance.\n\n`;
+  const loc  = mapURL
+    ? `📍 Live Location:\n${mapURL}\n\nPlease send help to this location immediately.`
+    : `📍 Location unavailable — please trace this number immediately.`;
+  return base + loc;
+}
+
+// ── UTILS ────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+}
+
+function vibrate(pattern) {
+  try { if (navigator.vibrate) navigator.vibrate(pattern); } catch(e) {}
+}
+
 async function acquireWakeLock() {
   try {
     if ('wakeLock' in navigator) {
       wakelock = await navigator.wakeLock.request('screen');
       document.addEventListener('visibilitychange', async () => {
-        if (!document.hidden && wakelock === null) {
+        if (!document.hidden && !wakelock) {
           wakelock = await navigator.wakeLock.request('screen');
         }
       });
     }
-  } catch (e) {
-    console.log('Wake lock unavailable:', e);
-  }
+  } catch(e) {}
 }
-
-// ── Vibration helper ───────────────────────────────────────
-function vibrate(pattern) {
-  if (navigator.vibrate) navigator.vibrate(pattern);
-}
-
-// ── Init ──────────────────────────────────────────────────
-window.addEventListener('load', () => {
-  // Set arc circumference as CSS custom property
-  document.getElementById('countdownArc').style.strokeDasharray = FULL_DASH;
-  document.getElementById('countdownArc').style.strokeDashoffset = 0;
-  console.log('Guardian loaded — tap "ARM PROTECTION" to enable shake detection');
-});
 </script>
 </body>
 </html>
