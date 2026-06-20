@@ -21,8 +21,10 @@
   --red: #FF3B3B;
   --red-glow: rgba(255,59,59,0.4);
   --green: #22C55E;
+  --amber: #F59E0B;
   --text: #EEF0FF;
   --text2: #8890B5;
+  --border: rgba(136,144,181,0.15);
 }
 
 html, body {
@@ -34,7 +36,7 @@ html, body {
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   display: flex;
   flex-direction: column;
@@ -42,7 +44,7 @@ body {
   justify-content: center;
 }
 
-/* Main screen */
+/* ── MAIN SCREEN ── */
 .main-screen {
   display: flex;
   flex-direction: column;
@@ -51,7 +53,7 @@ body {
   text-align: center;
   width: 100%;
   height: 100%;
-  opacity: 1;
+  padding: 32px 24px;
   transition: opacity 0.3s ease;
 }
 
@@ -60,362 +62,659 @@ body {
   pointer-events: none;
 }
 
+.shield-wrap {
+  position: relative;
+  margin-bottom: 36px;
+}
+
+.shield-ring {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(34,197,94,0.2);
+  animation: ringPop 3s ease-in-out infinite;
+}
+
+.shield-ring.r2 {
+  inset: -38px;
+  border-color: rgba(34,197,94,0.1);
+  animation-delay: 0.4s;
+}
+
+@keyframes ringPop {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
 .shield-icon {
-  font-size: 120px;
-  margin-bottom: 40px;
-  animation: float 3s ease-in-out infinite;
+  font-size: 90px;
+  display: block;
+  animation: float 3.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 24px rgba(34,197,94,0.3));
 }
 
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+  50% { transform: translateY(-14px); }
 }
 
 .main-text {
-  font-size: 32px;
-  font-weight: 700;
-  letter-spacing: 1px;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: 2px;
   color: var(--text);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
 }
 
-.sub-text {
-  font-size: 16px;
+.main-tagline {
+  font-size: 13px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
   color: var(--text2);
-  margin-bottom: 40px;
-  line-height: 1.5;
+  margin-bottom: 36px;
 }
 
-.status {
-  font-size: 14px;
-  color: var(--green);
-  background: rgba(34,197,94,0.1);
+/* Status badge */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
   padding: 10px 20px;
-  border-radius: 20px;
-  border: 1px solid rgba(34,197,94,0.3);
+  border-radius: 100px;
+  border: 1px solid;
+  transition: all 0.4s ease;
+  margin-bottom: 36px;
 }
 
-/* Countdown overlay */
+.status-badge.ready {
+  color: var(--green);
+  background: rgba(34,197,94,0.08);
+  border-color: rgba(34,197,94,0.3);
+}
+
+.status-badge.armed {
+  color: var(--green);
+  background: rgba(34,197,94,0.12);
+  border-color: rgba(34,197,94,0.5);
+}
+
+.status-badge.waiting {
+  color: var(--amber);
+  background: rgba(245,158,11,0.08);
+  border-color: rgba(245,158,11,0.3);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-badge.armed .status-dot {
+  animation: blink 1s ease infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+/* Activate button */
+.activate-btn {
+  background: transparent;
+  border: 2px solid var(--green);
+  color: var(--green);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 16px 40px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.25s;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.activate-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--green);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.activate-btn:hover::before,
+.activate-btn:active::before {
+  opacity: 0.12;
+}
+
+.activate-btn:active {
+  transform: scale(0.97);
+}
+
+/* Info strip */
+.info-strip {
+  margin-top: 32px;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text2);
+}
+
+.info-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.info-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--border);
+}
+
+/* Shake hint bar */
+.shake-hint {
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom) + 20px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.5s;
+  white-space: nowrap;
+}
+
+.shake-hint.visible {
+  opacity: 1;
+}
+
+.shake-icon {
+  animation: shakeAnim 1.5s ease infinite;
+}
+
+@keyframes shakeAnim {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-15deg); }
+  40% { transform: rotate(15deg); }
+  60% { transform: rotate(-10deg); }
+  80% { transform: rotate(10deg); }
+}
+
+/* ── COUNTDOWN SCREEN ── */
 .countdown-screen {
   position: fixed;
   inset: 0;
-  background: rgba(7,8,13,0.95);
+  background: rgba(7,8,13,0.97);
   display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 100;
-  animation: slideUp 0.3s ease;
 }
 
 .countdown-screen.active {
   display: flex;
+  animation: fadeIn 0.25s ease;
 }
 
-@keyframes slideUp {
-  from { transform: translateY(100px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.countdown-ring-wrap {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin-bottom: 32px;
+}
+
+.countdown-svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.countdown-track {
+  fill: none;
+  stroke: rgba(255,59,59,0.12);
+  stroke-width: 4;
+}
+
+.countdown-progress {
+  fill: none;
+  stroke: var(--red);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 502;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.9s linear;
+  filter: drop-shadow(0 0 6px var(--red));
 }
 
 .countdown-number {
-  font-size: 120px;
-  font-weight: 800;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 72px;
+  font-weight: 900;
   color: var(--red);
-  margin-bottom: 20px;
-  text-shadow: 0 0 20px var(--red-glow);
-  animation: pulse 0.6s ease infinite;
+  text-shadow: 0 0 30px var(--red-glow);
 }
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+.countdown-label {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 10px;
 }
 
 .countdown-message {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
   color: var(--text);
-  margin-bottom: 30px;
-  letter-spacing: 0.5px;
+  margin-bottom: 8px;
 }
 
 .countdown-sub {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text2);
   margin-bottom: 40px;
 }
 
 .cancel-btn {
   background: var(--surface);
-  border: 2px solid var(--red);
+  border: 2px solid rgba(255,59,59,0.5);
   color: var(--red);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
-  padding: 14px 36px;
-  border-radius: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 16px 44px;
+  border-radius: 14px;
   cursor: pointer;
   transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.cancel-btn:hover {
+.cancel-btn:hover,
+.cancel-btn:active {
   background: var(--red);
   color: white;
+  border-color: var(--red);
+  transform: scale(0.97);
 }
 
-.cancel-btn:active {
-  transform: scale(0.95);
-}
-
-/* Emergency call screen */
+/* ── CALL SCREEN ── */
 .call-screen {
   position: fixed;
   inset: 0;
-  background: linear-gradient(135deg, #FF3B3B 0%, #CC2E2E 100%);
+  background: linear-gradient(160deg, #C0392B 0%, #922B21 60%, #641E16 100%);
   display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 101;
+  padding: 40px;
 }
 
 .call-screen.active {
   display: flex;
+  animation: fadeIn 0.3s ease;
 }
 
-.call-icon {
-  font-size: 80px;
-  margin-bottom: 30px;
-  animation: ringPulse 1s ease infinite;
+.call-rings {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 32px;
 }
 
-@keyframes ringPulse {
+.call-ring-anim {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3);
+  animation: callRing 1.8s ease-out infinite;
+}
+
+.call-ring-anim:nth-child(2) { animation-delay: 0.6s; }
+.call-ring-anim:nth-child(3) { animation-delay: 1.2s; }
+
+@keyframes callRing {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.call-emoji {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  animation: callPulse 0.8s ease infinite;
+}
+
+@keyframes callPulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  50% { transform: scale(1.07); }
 }
 
 .call-title {
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
   color: white;
   margin-bottom: 10px;
 }
 
-.call-status {
-  font-size: 16px;
-  color: rgba(255,255,255,0.8);
-  margin-bottom: 40px;
+.call-number {
+  font-size: 22px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
 }
 
-@media (max-width: 600px) {
-  .main-text {
-    font-size: 28px;
-  }
+.call-status {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 1px;
+}
 
-  .shield-icon {
-    font-size: 100px;
-    margin-bottom: 30px;
-  }
-
-  .countdown-number {
-    font-size: 100px;
-  }
-
-  .countdown-message {
-    font-size: 20px;
-  }
+/* ── RESPONSIVE ── */
+@media (max-width: 400px) {
+  .main-text { font-size: 28px; }
+  .shield-icon { font-size: 76px; }
+  .info-strip { gap: 16px; }
 }
 </style>
 </head>
 <body>
 
-<!-- Main Screen -->
+<!-- ── MAIN SCREEN ── -->
 <div class="main-screen" id="mainScreen">
-  <div class="shield-icon">🛡️</div>
-  <div class="main-text">Guardian</div>
-  <div class="sub-text">At Your Service</div>
-  <div class="status">✓ Ready to Protect</div>
+  <div class="shield-wrap">
+    <div class="shield-ring"></div>
+    <div class="shield-ring r2"></div>
+    <span class="shield-icon">🛡️</span>
   </div>
 
-<!-- Countdown Screen -->
-<div class="countdown-screen" id="countdownScreen">
-  <div class="countdown-number" id="countdownNumber">10</div>
-  <div class="countdown-message">EMERGENCY ALERT</div>
-  <div class="countdown-sub">Press Cancel to abort emergency call</div>
-  <button class="cancel-btn" id="cancelBtn" onclick="cancelEmergency()">CANCEL</button>
+  <div class="main-text">Guardian</div>
+  <div class="main-tagline">Emergency Response</div>
+
+  <div class="status-badge waiting" id="statusBadge">
+    <div class="status-dot"></div>
+    <span id="statusText">Tap to Arm</span>
+  </div>
+
+  <button class="activate-btn" id="activateBtn" onclick="activateShakeDetection()">
+    ARM PROTECTION
+  </button>
+
+  <div class="info-strip">
+    <div class="info-item">
+      <div class="info-label">Mode</div>
+      <div class="info-value">Shake</div>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-item">
+      <div class="info-label">Countdown</div>
+      <div class="info-value">10 sec</div>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-item">
+      <div class="info-label">Calls</div>
+      <div class="info-value">Police</div>
+    </div>
+  </div>
 </div>
 
-<!-- Emergency Call Screen -->
+<!-- Shake hint -->
+<div class="shake-hint" id="shakeHint">
+  <span class="shake-icon">📳</span>
+  Shake your phone hard to trigger an emergency
+</div>
+
+<!-- ── COUNTDOWN SCREEN ── -->
+<div class="countdown-screen" id="countdownScreen">
+  <div class="countdown-ring-wrap">
+    <svg class="countdown-svg" viewBox="0 0 180 180">
+      <circle class="countdown-track" cx="90" cy="90" r="80"/>
+      <circle class="countdown-progress" id="countdownArc" cx="90" cy="90" r="80"/>
+    </svg>
+    <div class="countdown-number" id="countdownNumber">10</div>
+  </div>
+
+  <div class="countdown-label">Emergency Alert</div>
+  <div class="countdown-message">Calling Police in…</div>
+  <div class="countdown-sub">Shake again or press Cancel to abort</div>
+  <button class="cancel-btn" id="cancelBtn" onclick="cancelEmergency()">✕ &nbsp;CANCEL</button>
+</div>
+
+<!-- ── CALL SCREEN ── -->
 <div class="call-screen" id="callScreen">
-  <div class="call-icon">📞</div>
-  <div class="call-title">CALLING POLICE</div>
-  <div class="call-status">Connecting to nearest emergency services...</div>
+  <div class="call-rings">
+    <div class="call-ring-anim"></div>
+    <div class="call-ring-anim"></div>
+    <div class="call-ring-anim"></div>
+    <div class="call-emoji">📞</div>
+  </div>
+  <div class="call-title">Calling Police</div>
+  <div class="call-number">+91 97916 62479</div>
+  <div class="call-status">Connecting to emergency services…</div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════
-// GUARDIAN EMERGENCY APP
-// Shake Detection & Auto-Call to Police
-// ═══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
+//  GUARDIAN — Emergency Response
+//  Shake → Countdown → Auto-call to +919791662479
+// ════════════════════════════════════════════════════════════
 
-let isCountingDown = false;
-let countdownValue = 10;
+const EMERGENCY_NUMBER = '+919791662479';
+const SHAKE_THRESHOLD  = 18;   // m/s² — lower = more sensitive
+const SHAKE_COOLDOWN   = 2000; // ms between shake events
+const COUNTDOWN_SEC    = 10;
+
+let isArmed          = false;
+let isCountingDown   = false;
+let countdownValue   = COUNTDOWN_SEC;
 let countdownInterval = null;
-let lastShakeTime = 0;
-const SHAKE_THRESHOLD = 20;
-const SHAKE_COOLDOWN = 2000;
-let wakelock = null;
+let lastShakeTime    = 0;
+let wakelock         = null;
 
-// ───────────────────────────────────────────────────────────
-// Wake Lock - Keep app responsive even when screen is off
-// ───────────────────────────────────────────────────────────
-async function acquireWakeLock() {
-  try {
-    if ('wakeLock' in navigator) {
-      wakelock = await navigator.wakeLock.request('screen');
-      console.log('Wake lock acquired - app will stay responsive');
-      
-      // Re-acquire wake lock if document visibility changes
-      document.addEventListener('visibilitychange', async () => {
-        if (document.hidden && wakelock) {
-          wakelock = null;
-        } else if (!document.hidden && !wakelock) {
-          wakelock = await navigator.wakeLock.request('screen');
-        }
-      });
-    }
-  } catch (err) {
-    console.log('Wake lock not supported:', err);
-  }
-}
+const FULL_DASH = 2 * Math.PI * 80; // circumference for r=80
 
-// ───────────────────────────────────────────────────────────
-// Shake Detection
-// ───────────────────────────────────────────────────────────
-function initShakeDetection() {
-  if (!window.DeviceMotionEvent) {
-    console.log('DeviceMotionEvent not supported');
-    return;
-  }
+// ── Activate (requires user gesture for iOS) ──────────────
+function activateShakeDetection() {
+  if (isArmed) return;
 
-  console.log('Shake detection initialized');
+  // iOS 13+ requires explicit permission via user gesture
+  if (typeof DeviceMotionEvent !== 'undefined' &&
+      typeof DeviceMotionEvent.requestPermission === 'function') {
 
-// Request permission for iOS 13+
-  if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
     DeviceMotionEvent.requestPermission()
-      .then(permissionState => {
-      if (permissionState === 'granted') {
-        window.addEventListener('devicemotion', detectShake);
+      .then(state => {
+        if (state === 'granted') {
+          window.addEventListener('devicemotion', detectShake, { passive: true });
+          onArmed();
+        } else {
+          alert('Motion permission denied. Guardian needs motion access to detect shaking.');
         }
       })
-      .catch(console.error);
+      .catch(err => {
+        console.error('Permission error:', err);
+      });
   } else {
-    // Non-iOS 13 devices
-    window.addEventListener('devicemotion', detectShake);
+    // Android / desktop — no permission needed
+    window.addEventListener('devicemotion', detectShake, { passive: true });
+    onArmed();
   }
 }
+
+function onArmed() {
+  isArmed = true;
+
+  const badge = document.getElementById('statusBadge');
+  badge.className = 'status-badge armed';
+  document.getElementById('statusText').textContent = 'Armed & Monitoring';
+
+  const btn = document.getElementById('activateBtn');
+  btn.textContent = 'PROTECTION ACTIVE';
+  btn.style.opacity = '0.4';
+  btn.style.cursor  = 'default';
+  btn.onclick = null;
+
+  document.getElementById('shakeHint').classList.add('visible');
+
+  acquireWakeLock();
+  console.log('Guardian armed — shake detection active');
+}
+
+// ── Shake Detection ────────────────────────────────────────
+let lastX = null, lastY = null, lastZ = null;
 
 function detectShake(event) {
-  const acceleration = event.accelerationIncludingGravity;
-  if (!acceleration) return;
+  const acc = event.accelerationIncludingGravity;
+  if (!acc) return;
 
-  const x = acceleration.x || 0;
-  const y = acceleration.y || 0;
-  const z = acceleration.z || 0;
+  const x = acc.x || 0, y = acc.y || 0, z = acc.z || 0;
 
-  const magnitude = Math.sqrt(x * x + y * y + z * z);
-  const now = Date.now();
+  // Delta method — more reliable than magnitude alone
+  if (lastX !== null) {
+    const dx = Math.abs(x - lastX);
+    const dy = Math.abs(y - lastY);
+    const dz = Math.abs(z - lastZ);
+    const delta = Math.max(dx, dy, dz);
 
-  if (magnitude > SHAKE_THRESHOLD && (now - lastShakeTime > SHAKE_COOLDOWN) && !isCountingDown) {
-    lastShakeTime = now;
-    startCountdown();
+    const now = Date.now();
+    if (delta > SHAKE_THRESHOLD && (now - lastShakeTime) > SHAKE_COOLDOWN && !isCountingDown) {
+      lastShakeTime = now;
+      startCountdown();
+    }
   }
+
+  lastX = x; lastY = y; lastZ = z;
 }
 
-// ───────────────────────────────────────────────────────────
-// Countdown Logic
-// ───────────────────────────────────────────────────────────
+// ── Countdown ─────────────────────────────────────────────
 function startCountdown() {
   isCountingDown = true;
-  countdownValue = 10;
+  countdownValue = COUNTDOWN_SEC;
 
   document.getElementById('mainScreen').classList.add('hidden');
+  document.getElementById('shakeHint').classList.remove('visible');
   document.getElementById('countdownScreen').classList.add('active');
 
-  // Vibrate pattern
-  if (navigator.vibrate) {
-    navigator.vibrate([200, 100, 200]);
-  }
+  updateCountdownUI(COUNTDOWN_SEC);
+  vibrate([200, 100, 200, 100, 200]);
 
   countdownInterval = setInterval(() => {
-    document.getElementById('countdownNumber').textContent = countdownValue;
-
-    if (navigator.vibrate) {
-      navigator.vibrate(100);
-    }
-
     countdownValue--;
+    updateCountdownUI(countdownValue);
+    vibrate(80);
 
-    if (countdownValue < 0) {
+    if (countdownValue <= 0) {
       clearInterval(countdownInterval);
-      endCountdown();
+      triggerEmergencyCall();
     }
   }, 1000);
 }
 
+function updateCountdownUI(val) {
+  document.getElementById('countdownNumber').textContent = val;
+
+  // SVG arc progress — depletes as countdown goes down
+  const arc = document.getElementById('countdownArc');
+  const progress = val / COUNTDOWN_SEC; // 1 → 0
+  arc.style.strokeDashoffset = FULL_DASH * (1 - progress);
+}
+
 function cancelEmergency() {
   clearInterval(countdownInterval);
-  isCountingDown = false;
-  countdownValue = 10;
+  isCountingDown  = false;
+  countdownValue  = COUNTDOWN_SEC;
 
   document.getElementById('countdownScreen').classList.remove('active');
   document.getElementById('mainScreen').classList.remove('hidden');
 
-  // Vibrate cancel pattern
-  if (navigator.vibrate) {
-    navigator.vibrate([100, 50, 100]);
+  if (isArmed) {
+    document.getElementById('shakeHint').classList.add('visible');
   }
 
-  console.log('Emergency call cancelled');
+  vibrate([100, 60, 100]);
+  console.log('Emergency cancelled by user');
 }
 
-function endCountdown() {
+function triggerEmergencyCall() {
   document.getElementById('countdownScreen').classList.remove('active');
   document.getElementById('callScreen').classList.add('active');
 
-  // Continuous vibration during call
-  if (navigator.vibrate) {
-    navigator.vibrate([300, 100, 300, 100, 300]);
-  }
+  vibrate([400, 100, 400, 100, 400, 100, 400]);
 
-  // Call the specified number
   setTimeout(() => {
-    window.location.href = 'tel:+919791662479';
+    window.location.href = `tel:${EMERGENCY_NUMBER}`;
   }, 1500);
 }
 
-// ───────────────────────────────────────────────────────────
-// Initialize on Load
-// ───────────────────────────────────────────────────────────
-window.addEventListener('load', () => {
-  console.log('Guardian app loaded');
-  acquireWakeLock();
-  initShakeDetection();
-
-  // Prevent accidental screen lock
-  document.addEventListener('touchstart', () => {
-    if (wakelock === null && 'wakeLock' in navigator) {
-      acquireWakeLock();
+// ── Wake Lock ──────────────────────────────────────────────
+async function acquireWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakelock = await navigator.wakeLock.request('screen');
+      document.addEventListener('visibilitychange', async () => {
+        if (!document.hidden && wakelock === null) {
+          wakelock = await navigator.wakeLock.request('screen');
+        }
+      });
     }
-  });
-});
-
-// Prevent screen lock on user interaction
-document.addEventListener('click', () => {
-  if (wakelock === null && 'wakeLock' in navigator) {
-    acquireWakeLock();
+  } catch (e) {
+    console.log('Wake lock unavailable:', e);
   }
+}
+
+// ── Vibration helper ───────────────────────────────────────
+function vibrate(pattern) {
+  if (navigator.vibrate) navigator.vibrate(pattern);
+}
+
+// ── Init ──────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  // Set arc circumference as CSS custom property
+  document.getElementById('countdownArc').style.strokeDasharray = FULL_DASH;
+  document.getElementById('countdownArc').style.strokeDashoffset = 0;
+  console.log('Guardian loaded — tap "ARM PROTECTION" to enable shake detection');
 });
 </script>
-
 </body>
 </html>
