@@ -8,13 +8,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Unzip project
         run: unzip guardian_sos_v2.zip
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
@@ -35,7 +35,7 @@ jobs:
           flutter build apk --release
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: guardian-apk
-          path: guardian_sos/build/app/outputs/flutter-apk/app-release.apk
+          path: guardian_sos/build/app/outputs/flutter-apk/app-release.apkild/app/outputs/flutter-apk/app-release.apk
