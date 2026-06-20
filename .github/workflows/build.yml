@@ -29,6 +29,11 @@ jobs:
           cd guardian_sos
           flutter pub get
 
+      - name: Migrate to v2 embedding
+        run: |
+          cd guardian_sos
+          flutter create --platforms android . 
+
       - name: Build APK
         run: |
           cd guardian_sos
@@ -38,4 +43,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: guardian-apk
-          path: guardian_sos/build/app/outputs/flutter-apk/app-release.apkild/app/outputs/flutter-apk/app-release.apk
+          path: guardian_sos/build/app/outputs/flutter-apk/app-release.apk
