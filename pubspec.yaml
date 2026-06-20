@@ -1,0 +1,45 @@
+name: guardian_sos
+description: Guardian SOS - Shake to Emergency Alert
+
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Shake detection
+  sensors_plus: ^4.0.2
+
+  # Background service (works when screen is off)
+  flutter_background_service: ^5.0.5
+  flutter_background_service_android: ^6.2.2
+
+  # Location
+  geolocator: ^11.0.0
+
+  # Local notifications (alert user when shake triggered)
+  flutter_local_notifications: ^17.2.2
+
+  # HTTP for Twilio API calls
+  http: ^1.2.1
+
+  # Keep screen on
+  wakelock_plus: ^1.2.8
+
+  # URL launcher (open WhatsApp)
+  url_launcher: ^6.3.0
+
+  # Shared preferences (store emergency number)
+  shared_preferences: ^2.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
