@@ -234,7 +234,7 @@ body {
   <div class="main-text">Guardian</div>
   <div class="sub-text">At Your Service</div>
   <div class="status">✓ Ready to Protect</div>
-</div>
+  </div>
 
 <!-- Countdown Screen -->
 <div class="countdown-screen" id="countdownScreen">
@@ -299,12 +299,12 @@ function initShakeDetection() {
 
   console.log('Shake detection initialized');
 
-  // Request permission for iOS 13+
+// Request permission for iOS 13+
   if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
     DeviceMotionEvent.requestPermission()
       .then(permissionState => {
-        if (permissionState === 'granted') {
-          window.addEventListener('devicemotion', detectShake);
+      if (permissionState === 'granted') {
+        window.addEventListener('devicemotion', detectShake);
         }
       })
       .catch(console.error);
