@@ -1,0 +1,41 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Unzip project
+        run: unzip guardian_sos_v2.zip
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.3'
+
+      - name: Get dependencies
+        run: |
+          cd guardian_sos
+          flutter pub get
+
+      - name: Build APK
+        run: |
+          cd guardian_sos
+          flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: guardian-apk
+          path: guardian_sos/build/app/outputs/flutter-apk/app-release.apk
